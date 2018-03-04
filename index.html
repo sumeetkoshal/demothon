@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-  <script src="http://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script src="lib/solclient.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <link rel="stylesheet" href="theme.css" type="text/css">
@@ -120,7 +120,10 @@
      solace.SolclientFactory.init(factoryProps);
 
      var publisher=new TopicPublisher("USER/EMERGENCY/INFO");
+
+     function iframeloaded(){
       publisher.connect();
+     }
 
     $("#btnSubmit").click(function(){
 
@@ -162,6 +165,7 @@
 </head>
 
 <body>
+<iframe id="iframe" src="" onload="iframeloaded()" hidden></iframe>
 <div id="help-form" style="display:none" align="center">
   <h1>Send your information</h1>
   <button id="btnHelp" class="btn btn-danger col-md-4" ><i class="fa fa-hospital"></i>Emergency </button>
@@ -171,103 +175,103 @@
 
 
   <div id="input-form">
-  <form>
+    <form>
 
-    <fieldset>
+      <fieldset>
 
-      <!-- Form Name -->
-      <legend><img src="solace-logo-site-header.png" width="25%" height="25%">Health Alert</legend>
+        <!-- Form Name -->
+        <legend><img src="solace-logo-site-header.png" width="25%" height="25%">Health Alert</legend>
 
-      <!-- Text input-->
-      <div class="form-group row">
-        <label class="control-label col-md-1" for="txtName">Name</label>
-        <div class="col-md-4">
-         <input id="txtName" name="txtName" type="text"  class="form-control input-md float-right" >
+        <!-- Text input-->
+        <div class="form-group row">
+          <label class="control-label col-md-1" for="txtName">Name</label>
+          <div class="col-md-4">
+            <input id="txtName" name="txtName" type="text"  class="form-control input-md float-right" >
 
 
+          </div>
         </div>
-      </div>
 
-      <!-- Text input-->
-      <div class="form-group row">
-        <label class="control-label col-md-1" for="txtPhoneNumber">Phone Number</label>
+        <!-- Text input-->
+        <div class="form-group row">
+          <label class="control-label col-md-1" for="txtPhoneNumber">Phone Number</label>
 
-        <div class="col-md-4">
+          <div class="col-md-4">
 
-          <input id="txtPhoneNumber" name="txtPhoneNumber" type="text"  class="form-control input-md float-right"  >
+            <input id="txtPhoneNumber" name="txtPhoneNumber" type="text"  class="form-control input-md float-right"  >
 
+          </div>
         </div>
-      </div>
 
-      <!-- Multiple Radios (inline) -->
-      <div class="form-group row">
-        <label class="control-label col-md-1" for="grpSex">Sex</label>
-        <div class="col-md-2">
-          <label class="radio-inline" for="grpSex-0">
-            <input type="radio" name="grpSex" id="grpSex-0" value="M" checked="checked">
-            M
-          </label>
-          <label class="radio-inline" for="grpSex-1">
-            <input type="radio" name="grpSex" id="grpSex-1" value="F">
-            F
-          </label>
+        <!-- Multiple Radios (inline) -->
+        <div class="form-group row">
+          <label class="control-label col-md-1" for="grpSex">Sex</label>
+          <div class="col-md-2">
+            <label class="radio-inline" for="grpSex-0">
+              <input type="radio" name="grpSex" id="grpSex-0" value="M" checked="checked">
+              M
+            </label>
+            <label class="radio-inline" for="grpSex-1">
+              <input type="radio" name="grpSex" id="grpSex-1" value="F">
+              F
+            </label>
+          </div>
         </div>
-      </div>
 
-      <!-- Text input-->
-      <div class="form-group row">
-        <label class="control-label col-md-1" for="txtWeight">Weight</label>
+        <!-- Text input-->
+        <div class="form-group row">
+          <label class="control-label col-md-1" for="txtWeight">Weight</label>
 
-        <div class="col-md-2">
-          <input id="txtWeight" name="txtWeight" type="text" class="form-control input-md float-right" >
+          <div class="col-md-2">
+            <input id="txtWeight" name="txtWeight" type="text" class="form-control input-md float-right" >
 
+          </div>
         </div>
-      </div>
 
-      <!-- Text input-->
-      <div class="form-group row">
-        <label class="control-label col-md-1" for="txtAge">Age</label>
+        <!-- Text input-->
+        <div class="form-group row">
+          <label class="control-label col-md-1" for="txtAge">Age</label>
 
-        <div class="col-md-2">
+          <div class="col-md-2">
 
-          <input id="txtAge" name="txtAge" type="text"  class="form-control input-md float-right"  >
+            <input id="txtAge" name="txtAge" type="text"  class="form-control input-md float-right"  >
 
+          </div>
         </div>
-      </div>
 
 
 
 
-      <!-- Select -->
-      <div class="form-group row">
-        <label class="control-label col-md-1" for="optBloodGroup">Blood Group</label>
+        <!-- Select -->
+        <div class="form-group row">
+          <label class="control-label col-md-1" for="optBloodGroup">Blood Group</label>
 
-        <div class="col-md-2">
-          <select id="optBloodGroup" name="optBloodGroup" class="form-control">
-            <option value="A+">A+</option>
-            <option value="A-">A-</option>
-            <option value="B+">B+</option>
-            <option value="B-">B-</option>
-            <option value="AB+">AB+</option>
-            <option value="AB-">AB-</option>
-            <option value="O+">O+</option>
-            <option value="O-">O-</option>
-          </select>
+          <div class="col-md-2">
+            <select id="optBloodGroup" name="optBloodGroup" class="form-control">
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
         </div>
-      </div>
 
-      <!-- Button -->
-      <div class="form-group row">
-        <label class="col-md-1 control-label" for="btnSubmit"></label>
+        <!-- Button -->
+        <div class="form-group row">
+          <label class="col-md-1 control-label" for="btnSubmit"></label>
 
-        <div class="col-md-2">
-          <div id="btnSubmit" name="btnSubmit" class="btn btn-primary">Submit</div>
+          <div class="col-md-2">
+            <div id="btnSubmit" name="btnSubmit" class="btn btn-primary">Submit</div>
+          </div>
         </div>
-      </div>
 
-    </fieldset>
+      </fieldset>
 
-  </form>
+    </form>
   </div>
 </div>
 
