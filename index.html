@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <link rel="stylesheet" href="theme.css" type="text/css">
   <script>
-  var publisher=null;
+  var solacePublisher=null;
   $(function(){
 
 
@@ -120,7 +120,7 @@
      factoryProps.profile = solace.SolclientFactoryProfiles.version10;
      solace.SolclientFactory.init(factoryProps);
 
-     publisher=new TopicPublisher("USER/EMERGENCY/INFO");
+     solacePublisher=new TopicPublisher("USER/EMERGENCY/INFO");
 
 
 
@@ -150,7 +150,7 @@
       userInfoObject.weight=$("#txtWeight").val();
       userInfoObject.bloodgroup=$( "#optBloodGroup option:selected" ).text();
 
-      publisher.publish(JSON.stringify(userInfoObject));
+      solacePublisher.publish(JSON.stringify(userInfoObject));
 
 
 
@@ -159,8 +159,7 @@
     });
 
 function iframeloaded(){
-    if(publisher)
-      publisher.connect();
+      solacePublisher.connect();
  }
 
   </script>
