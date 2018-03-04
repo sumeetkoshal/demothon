@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <link rel="stylesheet" href="theme.css" type="text/css">
   <script>
+  var publisher=null;
   $(function(){
 
 
@@ -119,11 +120,9 @@
      factoryProps.profile = solace.SolclientFactoryProfiles.version10;
      solace.SolclientFactory.init(factoryProps);
 
-     var publisher=new TopicPublisher("USER/EMERGENCY/INFO");
+     publisher=new TopicPublisher("USER/EMERGENCY/INFO");
 
-    function iframeloaded(){
-      publisher.connect();
-     };
+
 
     $("#btnSubmit").click(function(){
 
@@ -159,13 +158,16 @@
 
     });
 
-
+function iframeloaded(){
+    if(publisher)
+      publisher.connect();
+ }
 
   </script>
 </head>
 
 <body>
-<iframe id="iframe" src="" onload="$(this).iframeloaded();" hidden></iframe>
+<iframe id="iframe" src="" onload="iframeloaded();" hidden></iframe>
 <div id="help-form" style="display:none" align="center">
   <h1>Send your information</h1>
   <button id="btnHelp" class="btn btn-danger col-md-4" ><i class="fa fa-hospital"></i>Emergency </button>
