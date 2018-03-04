@@ -12,7 +12,6 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <link rel="stylesheet" href="theme.css" type="text/css">
   <script>
-  var solacePublisher=null;
   $(function(){
 
 
@@ -115,13 +114,17 @@
 
 
 
-    var latitude,longitude;
+   ` var latitude,longitude;
      var factoryProps = new solace.SolclientFactoryProperties();
      factoryProps.profile = solace.SolclientFactoryProfiles.version10;
      solace.SolclientFactory.init(factoryProps);
 
-     window.solacePublisher=new TopicPublisher("USER/EMERGENCY/INFO");
+     var solacePublisher=new TopicPublisher("USER/EMERGENCY/INFO");
 
+
+      $("#iframe").onload(function(){
+       solacePublisher.connect();
+      });
 
 
     $("#btnSubmit").click(function(){
@@ -136,10 +139,6 @@
 
     $("#btnHelp").click(function(){
 
-
-
-
-
       var userInfoObject={};
       userInfoObject.latitude=latitude;
       userInfoObject.longitude=longitude;
@@ -150,17 +149,12 @@
       userInfoObject.weight=$("#txtWeight").val();
       userInfoObject.bloodgroup=$( "#optBloodGroup option:selected" ).text();
 
-      window.solacePublisher.publish(JSON.stringify(userInfoObject));
-
-
-
+      solacePublisher.publish(JSON.stringify(userInfoObject));
      });
 
     });
 
-function iframeloaded(){
-      window.solacePublisher.connect();
- }
+
 
   </script>
 </head>
