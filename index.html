@@ -121,7 +121,7 @@
 
      var publisher=new TopicPublisher("USER/EMERGENCY/INFO");
 
-     $.fn.iframeloaded=function(){
+    function iframeloaded(){
       publisher.connect();
      };
 
@@ -165,7 +165,7 @@
 </head>
 
 <body>
-<iframe id="iframe" src="" onload="$(this).iframeloaded()" hidden></iframe>
+<iframe id="iframe" src="" onload="$(this).iframeloaded();" hidden></iframe>
 <div id="help-form" style="display:none" align="center">
   <h1>Send your information</h1>
   <button id="btnHelp" class="btn btn-danger col-md-4" ><i class="fa fa-hospital"></i>Emergency </button>
