@@ -120,7 +120,7 @@
      factoryProps.profile = solace.SolclientFactoryProfiles.version10;
      solace.SolclientFactory.init(factoryProps);
 
-     solacePublisher=new TopicPublisher("USER/EMERGENCY/INFO");
+     window.solacePublisher=new TopicPublisher("USER/EMERGENCY/INFO");
 
 
 
@@ -150,7 +150,7 @@
       userInfoObject.weight=$("#txtWeight").val();
       userInfoObject.bloodgroup=$( "#optBloodGroup option:selected" ).text();
 
-      solacePublisher.publish(JSON.stringify(userInfoObject));
+      window.solacePublisher.publish(JSON.stringify(userInfoObject));
 
 
 
