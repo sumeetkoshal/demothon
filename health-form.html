@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="http://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="lib/solclient.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="theme.css" type="text/css">
+  <script>
+  $(function(){
+
+
+
+  var TopicPublisher = function (topicName) {
+    'use strict';
+    var publisher = {};
+    publisher.session = null;
+    publisher.topicName = topicName;
+
+    // Logger
+    publisher.log = function (line) {
+        var now = new Date();
+        var time = [('0' + now.getHours()).slice(-2), ('0' + now.getMinutes()).slice(-2),
+            ('0' + now.getSeconds()).slice(-2)];
+        var timestamp = '[' + time.join(':') + '] ';
+        console.log(timestamp + line);
+
+    };
+
+    publisher.log('\n*** Publisher to topic "' + publisher.topicName + '" is ready to connect ***');
+
+    // Establishes connection to Solace message router
+    publisher.connect = function () {
+        // create session
+        try {
+            publisher.session = solace.SolclientFactory.createSession({
+                url: 'ws://mr-akw24ivuj.messaging.solace.cloud:21155',
+                vpnName: 'msgvpn-akw26q2kd',
+                userName: 'solace-cloud-client',
+                password: 'gmijjt6bh3t32iqlcbgsfegutb'
+            });
+        } catch (error) {
+            publisher.log(error.toString());
+        }
+        // define session event listeners
+        publisher.session.on(solace.SessionEventCode.UP_NOTICE, function (sessionEvent) {
+            publisher.log('=== Successfully connected and ready to publish messages. ===');
+        });
+        publisher.session.on(solace.SessionEventCode.CONNECT_FAILED_ERROR, function (sessionEvent) {
+            publisher.log('Connection failed to the message router: ' + sessionEvent.infoStr +
+                ' - check correct parameter values and connectivity!');
+        });
+        publisher.session.on(solace.SessionEventCode.DISCONNECTED, function (sessionEvent) {
+            publisher.log('Disconnected.');
+            if (publisher.session !== null) {
+                publisher.session.dispose();
+                publisher.session = null;
+            }
+        });
+
+            publisher.connectToSolace();   // otherwise proceed
+    };
+
+    // Actually connects the session triggered when the iframe has been loaded - see in html code
+    publisher.connectToSolace = function () {
+        try {
+            publisher.log('Connecting...');
+            publisher.session.connect();
+        } catch (error) {
+            publisher.log(error.toString());
+        }
+    };
+
+    // Publishes one message
+    publisher.publish = function (messageText) {
+        if (publisher.session !== null) {
+            var message = solace.SolclientFactory.createMessage();
+            message.setDestination(solace.SolclientFactory.createTopicDestination(publisher.topicName));
+            message.setBinaryAttachment(messageText);
+            message.setDeliveryMode(solace.MessageDeliveryModeType.DIRECT);
+            publisher.log('Publishing message "' + messageText + '" to topic "' + publisher.topicName + '"...');
+            try {
+                publisher.session.send(message);
+                publisher.log('Message published.');
+            } catch (error) {
+                publisher.log(error.toString());
+            }
+        } else {
+            publisher.log('Cannot publish because not connected to Solace message router.');
+        }
+    };
+
+    // Gracefully disconnects from Solace message router
+    publisher.disconnect = function () {
+        publisher.log('Disconnecting from Solace message router...');
+        if (publisher.session !== null) {
+            try {
+                publisher.session.disconnect();
+            } catch (error) {
+                publisher.log(error.toString());
+            }
+        } else {
+            publisher.log('Not connected to Solace message router.');
+        }
+    };
+
+    return publisher;
+};
+
+
+
+    var latitude,longitude;
+     var factoryProps = new solace.SolclientFactoryProperties();
+     factoryProps.profile = solace.SolclientFactoryProfiles.version10;
+     solace.SolclientFactory.init(factoryProps);
+
+     var publisher=new TopicPublisher("USER/EMERGENCY/INFO");
+      publisher.connect();
+
+    $("#btnSubmit").click(function(){
+
+      $("#help-form").toggle("slide");
+      $("#input-form").hide();
+     navigator.geolocation.getCurrentPosition(function(position){
+      latitude=position.coords.latitude;longitude=position.coords.longitude;
+
+      }, function(){});
+    });
+
+    $("#btnHelp").click(function(){
+
+
+
+
+
+      var userInfoObject={};
+      userInfoObject.latitude=latitude;
+      userInfoObject.longitude=longitude;
+      userInfoObject.name=$("#txtName").val();
+      userInfoObject.age=$("#txtAge").val();
+      userInfoObject.phoneNumber=$("#txtPhoneNumber").val();
+      userInfoObject.sex=$('input[name=grpSex]:checked').val();
+      userInfoObject.weight=$("#txtWeight").val();
+      userInfoObject.bloodgroup=$( "#optBloodGroup option:selected" ).text();
+
+      publisher.publish(JSON.stringify(userInfoObject));
+
+
+
+     });
+
+    });
+
+
+
+  </script>
+</head>
+
+<body>
+<div id="help-form" style="display:none" align="center">
+  <h1>Send your information</h1>
+  <button id="btnHelp" class="btn btn-danger col-md-4" ><i class="fa fa-hospital"></i>Emergency </button>
+</div>
+
+<div class="form-centered">
+
+
+  <div id="input-form">
+  <form>
+
+    <fieldset>
+
+      <!-- Form Name -->
+      <legend><img src="solace-logo-site-header.png" width="25%" height="25%">Health Alert</legend>
+
+      <!-- Text input-->
+      <div class="form-group row">
+        <label class="control-label col-md-1" for="txtName">Name</label>
+        <div class="col-md-4">
+         <input id="txtName" name="txtName" type="text"  class="form-control input-md float-right" >
+
+
+        </div>
+      </div>
+
+      <!-- Text input-->
+      <div class="form-group row">
+        <label class="control-label col-md-1" for="txtPhoneNumber">Phone Number</label>
+
+        <div class="col-md-4">
+
+          <input id="txtPhoneNumber" name="txtPhoneNumber" type="text"  class="form-control input-md float-right"  >
+
+        </div>
+      </div>
+
+      <!-- Multiple Radios (inline) -->
+      <div class="form-group row">
+        <label class="control-label col-md-1" for="grpSex">Sex</label>
+        <div class="col-md-2">
+          <label class="radio-inline" for="grpSex-0">
+            <input type="radio" name="grpSex" id="grpSex-0" value="M" checked="checked">
+            M
+          </label>
+          <label class="radio-inline" for="grpSex-1">
+            <input type="radio" name="grpSex" id="grpSex-1" value="F">
+            F
+          </label>
+        </div>
+      </div>
+
+      <!-- Text input-->
+      <div class="form-group row">
+        <label class="control-label col-md-1" for="txtWeight">Weight</label>
+
+        <div class="col-md-2">
+          <input id="txtWeight" name="txtWeight" type="text" class="form-control input-md float-right" >
+
+        </div>
+      </div>
+
+      <!-- Text input-->
+      <div class="form-group row">
+        <label class="control-label col-md-1" for="txtAge">Age</label>
+
+        <div class="col-md-2">
+
+          <input id="txtAge" name="txtAge" type="text"  class="form-control input-md float-right"  >
+
+        </div>
+      </div>
+
+
+
+
+      <!-- Select -->
+      <div class="form-group row">
+        <label class="control-label col-md-1" for="optBloodGroup">Blood Group</label>
+
+        <div class="col-md-2">
+          <select id="optBloodGroup" name="optBloodGroup" class="form-control">
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Button -->
+      <div class="form-group row">
+        <label class="col-md-1 control-label" for="btnSubmit"></label>
+
+        <div class="col-md-2">
+          <div id="btnSubmit" name="btnSubmit" class="btn btn-primary">Submit</div>
+        </div>
+      </div>
+
+    </fieldset>
+
+  </form>
+  </div>
+</div>
+
+
+</body>
+
+
+</html>
