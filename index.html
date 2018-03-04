@@ -122,7 +122,7 @@
      var solacePublisher=new TopicPublisher("USER/EMERGENCY/INFO");
 
 
-      $("#iframe").onload(function(){
+      $("#iframe").ready(function(){
        solacePublisher.connect();
       });
 
